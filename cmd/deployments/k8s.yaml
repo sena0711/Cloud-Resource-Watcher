@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-asset-tracker-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aws-asset-tracker
+  template:
+    metadata:
+      labels:
+        app: aws-asset-tracker
+    spec:
+      containers:
+        - name: aws-asset-tracker-api
+          image: aws-asset-tracker:latest
+          ports:
+            - containerPort: 8080
