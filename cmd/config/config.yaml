@@ -1,0 +1,6 @@
+database:
+  host: "postgres"
+  user: "admin"
+  password: "password"
+  dbname: "aws_asset_tracker"
+  sslmode: "disable"
