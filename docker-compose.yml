@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: aws_asset_tracker_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aws_asset_tracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/db_scripts/init.sql:/docker-entrypoint-initdb.d/init.sql  # ✅ Mount the SQL script
+
+  api:
+    build:
+      context: .
+      dockerfile: deployments/Dockerfile
+    container_name: aws_asset_tracker_api
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://admin:password@postgres:5432/aws_asset_tracker?sslmode=disable
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["go", "run", "cmd/api/main.go"]
+
+  adminer:
+    image: adminer
+    container_name: aws_asset_tracker_adminer
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8080"
+
+volumes:
+  postgres_data:
